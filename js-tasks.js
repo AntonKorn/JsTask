@@ -10,7 +10,7 @@
  *   '\tHello, World! ' => 'Hello, World!'
  */
 function removeLeadingAndTrailingWhitespaces(value) {
-    throw new Error('Not implemented');
+    return value.trim();
 }
 
 /**
@@ -25,7 +25,7 @@ function removeLeadingAndTrailingWhitespaces(value) {
  *   'cat', 3 => 'catcatcat'
  */
 function repeatString(value, count) {
-    throw new Error('Not implemented');
+    return value.repeat(count);
 }
 
 /**
@@ -41,7 +41,10 @@ function repeatString(value, count) {
  *   'ABABAB','BA' => 'ABAB'
  */
 function removeFirstOccurrences(str, value) {
-    throw new Error('Not implemented');
+    var index = str.indexOf(value);
+    if (~index)
+        return str.slice(0, index) + str.slice(index + value.length);
+    return str;
 }
 
 /**
@@ -60,7 +63,16 @@ function removeFirstOccurrences(str, value) {
  *
  */
 function encodeToRot13(str) {
-    throw new Error('Not implemented');
+    var arr = Array.from(str);
+    function mapToRot13(c) {
+        var codePoint = c.codePointAt(0);
+        if (65 <= codePoint && codePoint < 78 || 97 <= codePoint && codePoint < 110)
+            return String.fromCodePoint(codePoint + 13);
+        if (78 <= codePoint && codePoint < 91 || 110 <= codePoint && codePoint < 123)
+            return String.fromCodePoint(codePoint - 13);
+        return String.fromCodePoint(codePoint);
+    }
+    return arr.map(mapToRot13).join('');
 }
 
 /**
@@ -77,7 +89,7 @@ function encodeToRot13(str) {
  *   isString(new String('test')) => true
  */
 function isString(value) {
-    throw new Error('Not implemented');
+    return typeof value === 'string' || value instanceof String;
 }
 
 /**
@@ -93,7 +105,7 @@ function isString(value) {
  *   5*x = 0         => 0
  */
 function getLinearEquationRoot(a, b) {
-    throw new Error('Not implemented');
+    return - b / a; //?
 }
 
 /**
@@ -109,7 +121,7 @@ function getLinearEquationRoot(a, b) {
  *     0     => 0
  */
 function getLastDigit(value) {
-    throw new Error('Not implemented');
+    return value % 10;
 }
 
 /**
@@ -124,7 +136,7 @@ function getLastDigit(value) {
  * '-525.5'     => -525.5
  */
 function parseNumberFromString(value) {
-    throw new Error('Not implemented');
+    return +value;
 }
 
 /**
@@ -145,7 +157,8 @@ function parseNumberFromString(value) {
  *   1678, 3  => 2000
  */
 function roundToPowerOfTen(num, pow) {
-    throw new Error('Not implemented');
+    var powOfTen = Math.pow(10, pow);
+    return Math.round(num / powOfTen) * powOfTen;
 }
 
 /**
@@ -159,8 +172,12 @@ function roundToPowerOfTen(num, pow) {
  *    2 => [ 1, 3 ]
  *    5 => [ 1, 3, 5, 7, 9 ]
  */
-function generateOdds(len) {
-    throw new Error('Not implemented');
+function generateOdds(len) { //?
+    var arr = new Array(+len);
+    var incr = 1;
+    return arr.map(function (v, i) {
+        return i;
+    });
 }
 
 /**
@@ -175,7 +192,7 @@ function generateOdds(len) {
  *    [] => []
  */
 function doubleArray(arr) {
-    throw new Error('Not implemented');
+    return arr.concat(arr);
 }
 
 /**
@@ -190,7 +207,7 @@ function doubleArray(arr) {
  *    [ 'cat, 'dog', 'raccon' ] => [ 'cat', 'dog', 'racoon' ]
  */
 function getArrayOfStrings(arr) {
-    throw new Error('Not implemented');
+    return arr.filter(isString);
 }
 
 /**
@@ -207,7 +224,7 @@ function getArrayOfStrings(arr) {
  *    [ false, 0, NaN, '', undefined ]   => [ ]
  */
 function removeFalsyValues(arr) {
-    throw new Error('Not implemented');
+    return arr.filter(Boolean);
 }
 
 /**
@@ -222,7 +239,7 @@ function removeFalsyValues(arr) {
  *    [ 1, 'b', 'c'], 0, 'x'  => [ 'x', 1, 'b', 'c' ]
  */
 function insertItem(arr, item, index) {
-    throw new Error('Not implemented');
+    arr.splice(index, 0, item);
 }
 
 /**
@@ -240,7 +257,6 @@ function insertItem(arr, item, index) {
  *   [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] => [ 1, 3, 6, 10, 15, 21, 28, 36, 45, 55 ]
  */
 function getMovingSum(arr) {
-    throw new Error('Not implemented');
 }
 
 /**
