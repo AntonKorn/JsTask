@@ -41,9 +41,10 @@ function repeatString(value, count) {
  *   'ABABAB','BA' => 'ABAB'
  */
 function removeFirstOccurrences(str, value) {
-    var index = str.indexOf(value);
-    if (~index)
+    const index = str.indexOf(value);
+    if (index > 0) {
         return str.slice(0, index) + str.slice(index + value.length);
+    }
     return str;
 }
 
@@ -64,14 +65,25 @@ function removeFirstOccurrences(str, value) {
  */
 function encodeToRot13(str) {
     var arr = Array.from(str);
+
     function mapToRot13(c) {
-        var codePoint = c.codePointAt(0);
-        if (65 <= codePoint && codePoint < 78 || 97 <= codePoint && codePoint < 110)
-            return String.fromCodePoint(codePoint + 13);
-        if (78 <= codePoint && codePoint < 91 || 110 <= codePoint && codePoint < 123)
-            return String.fromCodePoint(codePoint - 13);
+        let codePoint = c.codePointAt(0);
+
+        const shouldIncreaseSymbol = 65 <= codePoint && codePoint < 78
+            || 97 <= codePoint && codePoint < 110;
+        const shouldDecreaseSymbol = 78 <= codePoint && codePoint < 91
+            || 110 <= codePoint && codePoint < 123;
+
+        if (shouldIncreaseSymbol) {
+            codePoint += 13;
+        } else if (shouldDecreaseSymbol) {
+            codePoint -= 13;
+        }
+        // ignore not alphabetical characters
+
         return String.fromCodePoint(codePoint);
     }
+
     return arr.map(mapToRot13).join('');
 }
 
@@ -105,7 +117,7 @@ function isString(value) {
  *   5*x = 0         => 0
  */
 function getLinearEquationRoot(a, b) {
-    return - b / a; //?
+    return - b / a;
 }
 
 /**
@@ -172,11 +184,12 @@ function roundToPowerOfTen(num, pow) {
  *    2 => [ 1, 3 ]
  *    5 => [ 1, 3, 5, 7, 9 ]
  */
-function generateOdds(len) { //?
+function generateOdds(len) {
     var arr = new Array(+len);
+    arr.fill(0);
     var incr = 1;
     return arr.map(function (v, i) {
-        return i;
+        return i+incr++;
     });
 }
 
@@ -257,6 +270,9 @@ function insertItem(arr, item, index) {
  *   [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] => [ 1, 3, 6, 10, 15, 21, 28, 36, 45, 55 ]
  */
 function getMovingSum(arr) {
+    return arr.map(function (v, i) {
+        return arr.slice(0, i + 1).reduce((p, c) => p + c);
+    });
 }
 
 /**
@@ -274,7 +290,9 @@ function getMovingSum(arr) {
  *  [ 1,2,3,4,5 ] => [ 1, 2,2, 3,3,3, 4,4,4,4, 5,5,5,5,5 ]
  */
 function propagateItemsByPositionIndex(arr) {
-    throw new Error('Not implemented');
+    return [].concat(
+        ...arr.map((v, i) => new Array(i+1).fill(v))
+    );
 }
 
 /**
@@ -302,5 +320,12 @@ function propagateItemsByPositionIndex(arr) {
  *      { country: 'Russia',  city: 'Saint Petersburg' }
  */
 function sortCitiesArray(arr) {
-    throw new Error('Not implemented');
+    let compare = (a, b) => {
+        let countryCompare = a.country.localeCompare(b.country);
+        if (countryCompare !== 0)
+            return countryCompare;
+        return a.city.localeCompare(b.city);
+    };
+
+    return arr.sort(compare);
 }
