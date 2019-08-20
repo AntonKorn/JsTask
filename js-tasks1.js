@@ -15,7 +15,7 @@ function take(arr, number) {
 }
 
 function chain(arr) {
-    var self = {
+    let self = {
         take: function (func) {
             arr = arr.filter(func);
             return self;
@@ -31,4 +31,37 @@ function chain(arr) {
     };
 
     return self;
+}
+
+function createMemoizer(f) {
+
+    function CacheNode() {
+        return {
+            result: {
+                isSet: false,
+                value: undefined
+            },
+            children: {}
+        };
+    }
+
+    let cacheRoot = new CacheNode();
+
+    return function memoizer(...args) {
+        let currentNode = cacheRoot;
+
+        for (let i = 0; i < args.length; i++) {
+            let currentArg = args[i];
+            if (!currentNode.children[currentArg])
+                currentNode.children[currentArg] = new CacheNode();
+            currentNode = currentNode.children[currentArg];
+        }
+
+        if (!currentNode.result.isSet) {
+            currentNode.result.value = f(...args);
+            currentNode.result.isSet = true;
+        }
+
+        return currentNode.result.value;
+    };
 }
