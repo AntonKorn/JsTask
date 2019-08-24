@@ -3,30 +3,47 @@ function first(arr) {
 }
 
 function last(arr) {
-    return first(arr.slice(-1));
+    return arr[arr.length - 1];
 }
 
 function skip(arr, number) {
-    return arr.slice(number);
+    return arr.filter(i => i !== number);
 }
 
 function take(arr, number) {
     return arr.slice(0, number);
 }
 
+function isFunction(val) {
+    return val && typeof val === 'function';
+}
+
 function chain(arr) {
+    let arrCopy = arr.slice();
+
     let self = {
-        take: function (func) {
-            arr = arr.filter(func);
+        take: function (val) {
+            if (isFunction(val)) {
+                arrCopy = arrCopy.filter(val);
+            } else {
+                arrCopy = take(arrCopy, val);
+            }
+
             return self;
         },
 
-        skip: function (func) {
-            return self.take((...args) => !func(...args));
+        skip: function (val) {
+            if (isFunction(val)) {
+                // I actually change value of arrCopy in nested call
+                return self.take((...args) => !val(...args));
+            }
+
+            arrCopy = skip(arrCopy, val);
+            return self;
         },
 
         value: function () {
-            return arr;
+            return arrCopy;
         }
     };
 
@@ -41,7 +58,8 @@ function createMemoizer(f) {
                 isSet: false,
                 value: undefined
             },
-            children: {}
+            arg: null,
+            children: []
         };
     }
 
@@ -52,9 +70,17 @@ function createMemoizer(f) {
 
         for (let i = 0; i < args.length; i++) {
             let currentArg = args[i];
-            if (!currentNode.children[currentArg])
-                currentNode.children[currentArg] = new CacheNode();
-            currentNode = currentNode.children[currentArg];
+
+            // Note: perfomance abuse
+            let nextNode = first(currentNode.children.filter(c => c.arg === currentArg));
+
+            if (!nextNode) {
+                nextNode = new CacheNode();
+                nextNode.arg = currentArg;
+                currentNode.children.push(nextNode);
+            }
+
+            currentNode = nextNode;
         }
 
         if (!currentNode.result.isSet) {
